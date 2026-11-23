@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}{{ e.code }}{% endblock %}
+{% block content %}
+<h1>{{ e.code }} {{ e.name }}</h1>
+<p>{{ e.kind }}{% if e.location %}, {{ e.location }}{% endif %}</p>
+
+{% if e.out_of_service %}
+<section class="out" aria-labelledby="status-h">
+  <h2 id="status-h">OUT OF SERVICE</h2>
+  <p>{{ e.out_of_service_reason }} (since {{ (e.out_of_service_since or "")[:16] }})</p>
+  <form method="post" action="/equipment/{{ e.code|urlencode }}/return" class="stack">
+    <label>Staff ID <input name="done_by" required maxlength="20" placeholder="M-201"></label>
+    <label>What was fixed <textarea name="notes" required maxlength="500"></textarea></label>
+    <button>Return to service</button>
+  </form>
+</section>
+{% else %}
+<p>In service.
+  {% if has_checklist %}<a class="button" href="/equipment/{{ e.code|urlencode }}/check">Pre-use check</a>
+  {% else %}No checklist for kind "{{ e.kind }}" yet; import one with <code>equipment-log checklists</code>.{% endif %}
+</p>
+<details>
+  <summary>Take out of service</summary>
+  <form method="post" action="/equipment/{{ e.code|urlencode }}/out" class="stack">
+    <label>Reason <input name="reason" required maxlength="200"></label>
+    <button>Take out of service</button>
+  </form>
+</details>
+{% endif %}
+
+<section aria-labelledby="tasks-h">
+  <h2 id="tasks-h">Scheduled maintenance</h2>
+  {% if tasks %}
+  <table>
+    <thead><tr><th scope="col">Task</th><th scope="col">Every</th><th scope="col">Due</th><th scope="col">Record it</th></tr></thead>
+    <tbody>
+    {% for t in tasks %}{% set code = e.code %}{% include "_task_row.html" %}{% endfor %}
+    </tbody>
+  </table>
+  {% else %}<p>No scheduled tasks.</p>{% endif %}
+  <details>
+    <summary>Add a task</summary>
+    <form method="post" action="/equipment/{{ e.code|urlencode }}/tasks" class="stack">
+      <label>Task <input name="title" required maxlength="120" placeholder="Annual thorough examination"></label>
+      <label>Every (days) <input name="interval_days" type="number" min="1" max="3660" required></label>
+      <label>Last done (optional) <input name="last_done" type="date"></label>
+      <button>Add task</button>
+    </form>
+  </details>
+</section>
+
+<section aria-labelledby="hist-h">
+  <h2 id="hist-h">History</h2>
+  {% if events %}
+  <table>
+    <thead><tr><th scope="col">When</th><th scope="col">What</th><th scope="col">Who</th><th scope="col">Notes</th></tr></thead>
+    <tbody>
+    {% for ev in events %}
+      <tr><td>{{ ev.when }}</td><td>{{ ev.type }}: {{ ev.summary }}</td><td>{{ ev.who }}</td><td>{{ ev.notes }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}<p>No checks or maintenance recorded yet.</p>{% endif %}
+</section>
+{% endblock %}

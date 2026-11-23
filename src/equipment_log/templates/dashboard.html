@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Today, {{ today.isoformat() }}</h1>
+
+<section aria-labelledby="out-h">
+  <h2 id="out-h">Out of service ({{ out|length }})</h2>
+  {% if out %}
+  <ul>
+    {% for e in out %}
+    <li class="out"><a href="/equipment/{{ e.code|urlencode }}">{{ e.code }}</a> {{ e.name }}: {{ e.out_of_service_reason }} (since {{ (e.out_of_service_since or "")[:16] }})</li>
+    {% endfor %}
+  </ul>
+  {% else %}<p>Nothing is out of service.</p>{% endif %}
+</section>
+
+<section aria-labelledby="due-h">
+  <h2 id="due-h">Maintenance due in the next 14 days ({{ due|length }})</h2>
+  {% if due %}
+  <table>
+    <thead><tr><th scope="col">Due</th><th scope="col">Equipment</th><th scope="col">Task</th></tr></thead>
+    <tbody>
+    {% for d in due %}
+      <tr{% if d.overdue %} class="overdue"{% endif %}>
+        <td>{{ d.due_on.isoformat() }}{% if d.overdue %} (overdue {{ -d.days }} d){% elif d.days == 0 %} (today){% endif %}</td>
+        <td><a href="/equipment/{{ d.code|urlencode }}">{{ d.code }}</a> {{ d.equipment }}</td>
+        <td>{{ d.title }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}<p>Nothing due.</p>{% endif %}
+</section>
+
+<section aria-labelledby="unchecked-h">
+  <h2 id="unchecked-h">In service, no pre-use check today ({{ unchecked|length }})</h2>
+  {% if unchecked %}
+  <ul>
+    {% for e in unchecked %}
+    <li><a href="/equipment/{{ e.code|urlencode }}/check">Check {{ e.code }}</a> {{ e.name }}{% if e.location %}, {{ e.location }}{% endif %}</li>
+    {% endfor %}
+  </ul>
+  {% else %}<p>Everything in service was checked today.</p>{% endif %}
+</section>
+{% endblock %}

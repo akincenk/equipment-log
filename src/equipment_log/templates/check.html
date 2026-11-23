@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Check {{ e.code }}{% endblock %}
+{% block content %}
+<h1>Pre-use check: {{ e.code }} {{ e.name }}</h1>
+{% if e.out_of_service %}<p class="out">This equipment is out of service: {{ e.out_of_service_reason }}</p>{% endif %}
+{% if not items %}
+<p>No checklist for kind "{{ e.kind }}". Import one with <code>equipment-log checklists FILE.toml</code>.</p>
+{% else %}
+<h2>{{ title }}</h2>
+<p>Items marked <strong>critical</strong> take the equipment out of service when they fail.</p>
+<form method="post" action="/equipment/{{ e.code|urlencode }}/check" class="stack">
+  <label>Staff ID <input name="inspector" required maxlength="20" placeholder="S-104" value="{{ form.inspector if form else '' }}"></label>
+  {% for item in items %}
+  <fieldset>
+    <legend>{{ item.text }}{% if item.critical %} <strong>(critical)</strong>{% endif %}</legend>
+    {% for value, label in [("ok", "OK"), ("fail", "Fail"), ("na", "Not applicable")] %}
+    <label class="choice"><input type="radio" name="item-{{ item.id }}" value="{{ value }}" required{% if answers.get(item.id) == value %} checked{% endif %}> {{ label }}</label>
+    {% endfor %}
+  </fieldset>
+  {% endfor %}
+  <label>Notes (required when an item fails) <textarea name="notes" maxlength="500">{{ form.notes if form else '' }}</textarea></label>
+  <button>Save check</button>
+</form>
+{% endif %}
+{% endblock %}

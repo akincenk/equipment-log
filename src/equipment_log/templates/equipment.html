@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Equipment{% endblock %}
+{% block content %}
+<h1>Equipment</h1>
+<label for="q">Search</label>
+<input id="q" name="q" type="search" value="{{ q }}" autocomplete="off"
+       hx-get="/equipment" hx-trigger="input changed delay:300ms, search" hx-target="#rows">
+<table>
+  <thead><tr><th scope="col">Code</th><th scope="col">Name</th><th scope="col">Kind</th><th scope="col">Location</th><th scope="col">Status</th><th scope="col">Last check</th></tr></thead>
+  <tbody id="rows">{% include "_equipment_rows.html" %}</tbody>
+</table>
+
+<h2>Add equipment</h2>
+<form method="post" action="/equipment" class="stack">
+  <label>Code <input name="code" required maxlength="32" placeholder="FL-03" value="{{ form.code if form else '' }}"></label>
+  <label>Name <input name="name" required maxlength="80" placeholder="Reach truck 3" value="{{ form.name if form else '' }}"></label>
+  <label>Kind <input name="kind" required maxlength="40" placeholder="forklift" value="{{ form.kind if form else '' }}"></label>
+  <label>Location <input name="location" maxlength="80" placeholder="Dock B" value="{{ form.location if form else '' }}"></label>
+  <button>Add</button>
+</form>
+{% endblock %}

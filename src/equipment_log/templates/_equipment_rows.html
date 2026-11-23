@@ -1,0 +1,12 @@
+{% for e in rows %}
+<tr{% if e.out_of_service %} class="out"{% endif %}>
+  <td><a href="/equipment/{{ e.code|urlencode }}">{{ e.code }}</a></td>
+  <td>{{ e.name }}</td>
+  <td>{{ e.kind }}</td>
+  <td>{{ e.location }}</td>
+  <td>{% if e.out_of_service %}OUT OF SERVICE{% else %}in service{% endif %}</td>
+  <td>{{ (e.last_check or "never")[:16] }}{% if e.checked_today %} (today){% endif %}</td>
+</tr>
+{% else %}
+<tr><td colspan="6">No equipment{% if q %} matches "{{ q }}"{% endif %}.</td></tr>
+{% endfor %}
