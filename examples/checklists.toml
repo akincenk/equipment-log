@@ -1,0 +1,47 @@
+# Sample pre-use checklists. Written for this project, not copied from a regulator's form.
+# Check your own jurisdiction's rules and the manufacturer's manual for what your checks must cover.
+# Items marked critical = true take the equipment out of service when they fail.
+
+[checklists.forklift]
+title = "Forklift pre-use check"
+items = [
+  { text = "Brakes and parking brake hold", critical = true },
+  { text = "Steering moves freely, no excess play", critical = true },
+  { text = "Forks and carriage: no cracks, bends or worn heels", critical = true },
+  { text = "Mast chains and hydraulic hoses: no leaks or damage", critical = true },
+  { text = "Seat belt latches and releases", critical = true },
+  "Horn works",
+  "Lights and reversing beeper work",
+  "Tyres: no chunks missing or embedded objects",
+  "Battery charged and connector undamaged (electric) or no fuel smell (LPG)",
+  "Data plate readable",
+]
+
+[checklists.ladder]
+title = "Ladder / rolling stair check"
+items = [
+  { text = "Rails and steps: no cracks, bends or loose rivets", critical = true },
+  { text = "Feet or castors present and locking", critical = true },
+  { text = "Handrails and top platform secure", critical = true },
+  "Steps clean, no grease or wrap",
+  "Label with load rating readable",
+]
+
+[checklists.pallet-jack]
+title = "Pallet jack check"
+items = [
+  { text = "Lifts and lowers smoothly, holds a load", critical = true },
+  { text = "Wheels and rollers turn, no flat spots", critical = true },
+  "Handle returns to upright",
+  "No hydraulic leaks",
+]
+
+[checklists.scanner]
+title = "Handheld scanner check"
+items = [
+  { text = "Battery holds a charge for the shift", critical = false },
+  "Screen readable, no cracks",
+  "Scans a test barcode on the first try",
+  "Trigger and keypad work",
+  "Wrist strap attached",
+]
