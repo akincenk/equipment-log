@@ -18,6 +18,10 @@ def test_cli_flow(tmp_path, capsys):
     assert "overdue 3 d" in capsys.readouterr().out
     assert main(["--db", db, "due", "--today", "2026-11-01", "--days", "7"]) == 0
     assert "nothing due" in capsys.readouterr().out
+    assert main(["--db", db, "task", "FL-03", "Load test", "--every", "365"]) == 0
+    capsys.readouterr()
+    assert main(["--db", db, "due", "--today", "2026-11-01", "--days", "7"]) == 2
+    assert capsys.readouterr().out.splitlines() == ["never done  overdue        FL-03      Load test"]
     out = tmp_path / "checks.csv"
     assert main(["--db", db, "export", "-o", str(out)]) == 0
     assert out.read_text().startswith("performed_at")

@@ -1,7 +1,7 @@
 <tr id="task-{{ t.task_id }}"{% if t.overdue %} class="overdue"{% endif %}>
   <td>{{ t.title }}</td>
   <td>{{ t.interval_days }} d</td>
-  <td>{{ t.due_on.isoformat() }}{% if t.overdue %} (overdue {{ -t.days }} d){% elif t.days == 0 %} (today){% endif %}</td>
+  <td>{% if t.never_done %}never done{% else %}{{ t.due_on.isoformat() }}{% if t.overdue %} (overdue {{ -t.days }} d){% elif t.days == 0 %} (today){% endif %}{% endif %}</td>
   <td>
     <form method="post" action="/tasks/{{ t.task_id }}/done" hx-post="/tasks/{{ t.task_id }}/done" hx-target="#task-{{ t.task_id }}" hx-swap="outerHTML" class="inline">
       <input type="hidden" name="code" value="{{ code }}">

@@ -121,6 +121,9 @@ def _run(args: argparse.Namespace) -> int:
         today = args.today or date.today()
         due = store.due_list(conn, today, within_days=args.days)
         for d in due:
+            if d.never_done:
+                print(f"{'never done':<10}  {'overdue':<14} {d.code:<10} {d.title}")
+                continue
             when = f"overdue {-d.days} d" if d.overdue else ("today" if d.days == 0 else f"in {d.days} d")
             print(f"{d.due_on.isoformat()}  {when:<14} {d.code:<10} {d.title}")
         if not due:

@@ -25,12 +25,17 @@ class Due:
     task_id: int
     title: str
     interval_days: int
-    due_on: date
-    days: int  # negative = overdue by that many days
+    due_on: date | None  # None = never done
+    days: int | None  # negative = overdue by that many days
+
+    @property
+    def never_done(self) -> bool:
+        return self.due_on is None
 
     @property
     def overdue(self) -> bool:
-        return self.days < 0
+        # A task with no record has no proof it was ever done, so it counts as overdue.
+        return self.days is None or self.days < 0
 
 
 def _stamp(moment: datetime) -> str:
@@ -315,7 +320,7 @@ def tasks_for(conn: sqlite3.Connection, code: str, today: date) -> list[Due]:
 def due_list(conn: sqlite3.Connection, today: date, within_days: int | None = 7) -> list[Due]:
     """Tasks due within `within_days` (overdue included), soonest first. None = every task.
 
-    A task never done is due today.
+    A task never done has no due date, is overdue, and comes first.
     """
     rows = conn.execute(
         """
@@ -325,14 +330,13 @@ def due_list(conn: sqlite3.Connection, today: date, within_days: int | None = 7)
     ).fetchall()
     result = []
     for row in rows:
+        due_on = days = None
         if row["last_done"]:
             due_on = date.fromisoformat(row["last_done"]) + timedelta(days=row["interval_days"])
-        else:
-            due_on = today
-        days = (due_on - today).days
-        if within_days is None or days <= within_days:
+            days = (due_on - today).days
+        if within_days is None or days is None or days <= within_days:
             result.append(Due(row["code"], row["name"], row["id"], row["title"], row["interval_days"], due_on, days))
-    result.sort(key=lambda d: (d.due_on, d.code, d.title))
+    result.sort(key=lambda d: (d.due_on is not None, d.due_on or today, d.code, d.title))
     return result
 
 
