@@ -14,7 +14,7 @@ Supervisors and maintenance leads in small warehouses, stockrooms, workshops and
 - **Pre-use checks** from a checklist per kind of equipment (forklift, ladder, ...). Every item is answered OK, Fail or Not applicable, with a staff ID.
 - **Critical items.** A failed critical item (brakes, forks, ladder rails) takes the equipment out of service at once. A failed non-critical item (horn, label) is saved as a defect and the check still passes.
 - **Out of service until fixed.** Equipment goes back in service only with a maintenance record that says what was fixed and by whom. After that it needs a new pre-use check before it counts as checked today.
-- **Scheduled maintenance** with a fixed interval in days (monthly ladder inspection, annual thorough examination). A late paper record for an older date never moves the next due date backwards.
+- **Scheduled maintenance** with a fixed interval in days (monthly ladder inspection, annual thorough examination). A late paper record for an older date never moves the next due date backwards. A task with no record yet is shown first as "never done" and counts as overdue.
 - **History** per piece of equipment, and a **CSV export** of every answered item for audits (cells that a spreadsheet would run as formulas are prefixed with `'`).
 - A command line for setup and for a cron job: `equipment-log due` exits with code 2 when something is overdue.
 
