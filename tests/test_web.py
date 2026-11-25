@@ -78,6 +78,9 @@ def test_task_done_htmx_returns_row(client):
     add(client)
     r = client.post("/equipment/FL-03/tasks", data={"title": "Annual exam", "interval_days": "365", "last_done": ""})
     assert "Task added." in r.text
+    assert 'class="overdue"' in r.text and "never done" in r.text
+    page = client.get("/").text
+    assert "never done" in page and "Annual exam" in page
     task = store.tasks_for(client.app.state.conn, "FL-03", NOW.date())[0]
     r = client.post(
         f"/tasks/{task.task_id}/done",

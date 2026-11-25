@@ -21,7 +21,7 @@
     <tbody>
     {% for d in due %}
       <tr{% if d.overdue %} class="overdue"{% endif %}>
-        <td>{{ d.due_on.isoformat() }}{% if d.overdue %} (overdue {{ -d.days }} d){% elif d.days == 0 %} (today){% endif %}</td>
+        <td>{% if d.never_done %}never done{% else %}{{ d.due_on.isoformat() }}{% if d.overdue %} (overdue {{ -d.days }} d){% elif d.days == 0 %} (today){% endif %}{% endif %}</td>
         <td><a href="/equipment/{{ d.code|urlencode }}">{{ d.code }}</a> {{ d.equipment }}</td>
         <td>{{ d.title }}</td>
       </tr>

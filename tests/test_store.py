@@ -88,8 +88,12 @@ def test_due_list_and_late_entries(conn):
     monthly = store.add_task(conn, "LD-01", "Monthly ladder inspection", 30, "2026-11-10")
     never = store.add_task(conn, "LD-01", "Replace feet", 365)
     due = store.due_list(conn, today, within_days=7)
-    assert [(d.task_id, d.days) for d in due] == [(annual, -3), (never, 0)]
-    assert due[0].overdue
+    assert [(d.task_id, d.days) for d in due] == [(never, None), (annual, -3)]
+    assert due[0].never_done and due[0].due_on is None and due[0].overdue
+    assert due[1].overdue and not due[1].never_done
+    # A never-done task stays overdue and first however far ahead we look.
+    later = store.due_list(conn, date(2027, 6, 1), within_days=0)
+    assert later[0].task_id == never and later[0].overdue
     assert [d.task_id for d in store.due_list(conn, today, within_days=30)][-1] == monthly
 
     store.complete_task(conn, annual, "2026-11-23", "M-201", "passed", NOW)
